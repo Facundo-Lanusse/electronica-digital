@@ -1,0 +1,23 @@
+{
+  "name": "electronica-digital",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Facundo-Lanusse/electronica-digital.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Facundo-Lanusse/electronica-digital/issues"
+  },
+  "homepage": "https://github.com/Facundo-Lanusse/electronica-digital#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
