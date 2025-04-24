@@ -10,7 +10,7 @@ const LandingPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
     const handleClick = () => {
             navigate('/home');
@@ -19,10 +19,19 @@ const LandingPage = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        if (password !== confirmPassword) {
-            alert("Passwords do not match");
+        console.log("📤 Intentando registrar usuario...");
+        console.log("🌍 Backend URL:", BACKEND_URL);
+
+        if (!name || !email || !password || !confirmPassword) {
+            alert("Todos los campos son obligatorios");
             return;
         }
+
+        if (password !== confirmPassword) {
+            alert("Las contraseñas no coinciden");
+            return;
+        }
+
         try {
             const response = await fetch(`${BACKEND_URL}/api/signup`, {
                 method: 'POST',
@@ -31,18 +40,20 @@ const LandingPage = () => {
             });
 
             const data = await response.json();
+            console.log("📥 Respuesta del backend:", data);
 
             if (response.ok) {
-                alert('Usuario registrado con éxito');
+                alert('✅ Usuario registrado con éxito');
                 setActiveTab("tab2"); // Redirigir al login
             } else {
-                alert(data.message || 'Error al registrar');
+                alert(data.error || '❌ Error al registrar');
             }
         } catch (error) {
-            console.error('Error en registro:', error);
-            alert('Fallo de conexión');
+            console.error('🚨 Error en registro:', error);
+            alert('❌ Fallo de conexión con el servidor');
         }
     };
+
     const [activeTab, setActiveTab] = useState(null);
     const tabs = [
         { id: "tab1", label: "Register" },
@@ -122,7 +133,7 @@ const LandingPage = () => {
                                 />
                             </div>
                             <div className="signInWrapper">
-                                <button type="submit" className="signIn">Sign In</button>
+                                <button type="submit" className="signIn">Sign Up</button>
                             </div>
                         </form>
 
