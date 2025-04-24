@@ -1,20 +1,8 @@
-const express = require('express');
 const mqtt = require('mqtt');
-const { Pool } = require('pg')
-const router = express.Router();
-const bodyParser = require('body-parser')
+const db = require('../dataBase')
 
 // conexión al broker mqtt con mi ip elastica publica
 const mqttClient = mqtt.connect('mqtt://100.28.15.22:1883')
-
-// Configuración de PostgreSQL (IP privada de la instancia)
-const db = new Pool({
-    host: '172.31.34.58',          // IP privada de tu instancia PostgreSQL
-    port: 5432,
-    user: 'electronica_user',
-    password: 'electro123',
-    database: 'electronica'
-});
 
 // Cuando se conecta al broker MQTT
 mqttClient.on('connect', () => {
@@ -32,12 +20,13 @@ mqttClient.on('connect', () => {
 
 // Mensajes del ESP32
 mqttClient.on('message', async (topic, message) => {
-    const asiento = topic.split('/')[2]; // ejemplo: sensor/asiento/3
-    const ocupado = message.toString() === '1';
+    const parts = topic.split('/');
+    const asiento = parseInt(parts[2]); // ejemplo: sensor/asiento/3
+    const ocupado = message.toString() === '1'; // '1' => true; '0' => false
 
     try {
         await db.query(
-            'UPDATE asientos SET ocupado = $1 WHERE numero = $2',
+            'UPDATE seat SET is_occupied = $1 WHERE seat_number = $2',
             [ocupado, asiento]
         );
         console.log(`Asiento ${asiento} actualizado a ${ocupado ? 'Ocupado' : 'Libre'}`);
@@ -45,5 +34,3 @@ mqttClient.on('message', async (topic, message) => {
         console.error('Error al actualizar asiento:', err);
     }
 });
-
-module.exports = router
