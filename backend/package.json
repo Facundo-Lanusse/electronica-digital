@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/Facundo-Lanusse/electronica-digital#readme",
   "dependencies": {
+    "body-parser": "^2.2.0",
     "express": "^4.21.2",
-    "mqtt": "^5.11.0"
+    "mqtt": "^5.11.0",
+    "pg": "^8.15.5"
   }
 }
