@@ -5,15 +5,50 @@ import '../css/LandingPage.css';
 
 const LandingPage = () => {
     const navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
 
     const handleClick = () => {
-        navigate('/home');
+            navigate('/home');
+    };
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Usuario registrado con éxito');
+                setActiveTab("tab2"); // Redirigir al login
+            } else {
+                alert(data.message || 'Error al registrar');
+            }
+        } catch (error) {
+            console.error('Error en registro:', error);
+            alert('Fallo de conexión');
+        }
     };
     const [activeTab, setActiveTab] = useState(null);
     const tabs = [
         { id: "tab1", label: "Register" },
         { id: "tab2", label: "Login" }
     ];
+
 
 
     return (
@@ -49,22 +84,42 @@ const LandingPage = () => {
                         <p className="register-subtitle">
                             Sign up with your email and password to continue
                         </p>
-                        <form className="register-form">
+                        <form className="register-form" onSubmit={handleRegister}>
                             <div className="input-group">
                                 <i className='bx bx-user userIcon'></i>
-                                <input type="text" placeholder="Username" />
+                                <input
+                                    type="text"
+                                    placeholder="Username"
+                                    value={name}
+                                    onChange={(e) =>   setName(e.target.value)}
+                                />
                             </div>
                             <div className="input-group">
                                 <img src="EnvelopeSimple.svg" alt="Email Icon" />
-                                <input type="email" placeholder="Email Address" />
+                                <input
+                                    type="email"
+                                    placeholder="Email Address"
+                                    value={email}
+                                    onChange={(e) =>   setEmail(e.target.value)}
+                                />
                             </div>
                             <div className="input-group">
                                 <img src="Lock.svg" alt="Password Icon" />
-                                <input type="password" placeholder="Password" />
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) =>   setPassword(e.target.value)}
+                                />
                             </div>
                             <div className="input-group">
                                 <img src="Lock.svg" alt="Confirm Password Icon" />
-                                <input type="password" placeholder="Confirm Password" />
+                                <input
+                                    type="password"
+                                    placeholder="Confirm Password"
+                                    value={confirmPassword}
+                                    onChange={(e) =>   setConfirmPassword(e.target.value)}
+                                />
                             </div>
                             <div className="signInWrapper">
                                 <button type="submit" className="signIn">Sign In</button>
