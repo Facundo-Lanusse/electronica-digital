@@ -1,15 +1,13 @@
 const express = require('express');
-const mqtt = require('mqtt');
-const { Pool } = require('pg')
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const mqttRoute = require('./routes/mqttConfig');
 
 const app = express();
+const PORT = 3000;
+
 app.use(bodyParser.json());
+app.use('/api', mqttRoute);
 
-//Rutas
-app.use('/api', require('/routes/authRoutes'));
-app.use('/api', require('/routes/mqttConfig'));
-
-app.listen(3000, () => {
-    console.log(`Servidor corriendo en http://localhost:3000`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor Express corriendo en http://0.0.0.0:${PORT}`);
 });

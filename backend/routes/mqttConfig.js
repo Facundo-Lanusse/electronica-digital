@@ -4,9 +4,6 @@ const { Pool } = require('pg')
 const router = express.Router();
 const bodyParser = require('body-parser')
 
-const app = express();
-app.use(bodyParser.json());
-
 // conexión al broker mqtt con mi ip elastica publica
 const mqttClient = mqtt.connect('mqtt://100.28.15.22:1883')
 
