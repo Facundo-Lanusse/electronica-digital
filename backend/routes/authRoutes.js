@@ -36,7 +36,7 @@ router.post('/signup', async (req, res) => {
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
         const result = await db.query(
-            'INSERT INTO "user" (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email, registered_at',
+            'INSERT INTO user (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email, registered_at',
             [name, email, passwordHash]
         )
         console.log('Usuario creado en DB'); // LOG 2
