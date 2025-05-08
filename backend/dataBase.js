@@ -5,7 +5,7 @@ const dataBase = new Pool({
     host: '172.31.34.58',          // IP privada de tu instancia PostgreSQL
     port: 5432,
     user: 'electronica_user',
-    password: 'electro123',
+    password: 'electro123', // electronica2025
     database: 'electronica'
 });
 
