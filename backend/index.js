@@ -1,13 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // 👈 Agregás CORS
+const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
+// ⚠️ Configurar CORS correctamente
+app.use(cors({
+    origin: 'http://100.28.15.22:3001',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-app.use(cors());
+app.options('*', cors()); // maneja preflight requests
 
-require('./routes/mqttService')
+require('./routes/mqttService');
 const authRoutes = require('./routes/authRoutes');
 const seatsRoutes = require('./routes/seatRoutes');
 
