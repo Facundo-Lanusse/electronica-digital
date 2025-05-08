@@ -19,17 +19,17 @@ const LandingPage = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        console.log("📤 Intentando registrar usuario...");
-        console.log("🌍 Backend URL:", BACKEND_URL);
+        console.log("Intentando registrar usuario...");
+        console.log("Backend URL:", BACKEND_URL);
 
         if (!name || !email || !password || !confirmPassword) {
-            alert("Todos los campos son obligatorios");
-            return;
+            return alert("Todos los campos son obligatorios");
+
         }
 
         if (password !== confirmPassword) {
-            alert("Las contraseñas no coinciden");
-            return;
+            return alert("Las contraseñas no coinciden");
+
         }
 
         try {
@@ -40,17 +40,17 @@ const LandingPage = () => {
             });
 
             const data = await response.json();
-            console.log("📥 Respuesta del backend:", data);
+            console.log("Respuesta del backend:", data);
 
             if (response.ok) {
-                alert('✅ Usuario registrado con éxito');
+                alert('Usuario registrado con éxito');
                 setActiveTab("tab2"); // Redirigir al login
             } else {
-                alert(data.error || '❌ Error al registrar');
+                alert(data.error || 'Error al registrar');
             }
         } catch (error) {
-            console.error('🚨 Error en registro:', error);
-            alert('❌ Fallo de conexión con el servidor');
+            console.error('Error en registro:', error);
+            alert('Fallo de conexión con el servidor');
         }
     };
 
