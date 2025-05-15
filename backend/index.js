@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 require('./routes/mqttService')
 const authRoutes = require('./routes/authRoutes');
