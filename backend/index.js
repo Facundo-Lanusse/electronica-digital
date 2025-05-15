@@ -5,11 +5,7 @@ const app = express();
 const PORT = 3001;
 
 // Configurar CORS correctamente
-app.use(cors({
-    origin: 'http://100.28.15.22:3001',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
 
 app.options('*', cors()); // maneja preflight requests
 

@@ -6,6 +6,7 @@ function Reservar() {
     const [seats, setSeats] = useState([]);
     const [loading, setLoading] = useState(true);
     const trainId = 1; // Cambiar por el ID del tren correspondiente
+    const userId = localStorage.getItem('userId');
 
     useEffect(() => {
         const fetchSeats = async () => {
@@ -18,8 +19,8 @@ function Reservar() {
                     setSeats(data.seats.map(seat => ({
                         id: seat.seat_number,
                         railcar: seat.railcar_number,
-                        is_occupy: seat.is_occupied,
-                        reserved_by: seat.reserved_by
+                        isOccupied: seat.is_occupied,
+                        reservedBy: seat.reserved_by
                     })));
                 }
                 setLoading(false);
