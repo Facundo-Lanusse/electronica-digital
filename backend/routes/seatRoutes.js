@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../dataBase');
-const {query, json} = require("express");
 
 router.get('/seats/:trainId', async (req, res) => {
 

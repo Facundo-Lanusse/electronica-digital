@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../dataBase'); // conexión correcta a PostgreSQL
+const bcrypt = require('bcrypt')
 
 // Ruta de login básica (POST /api/login)
 router.post('/login', async (req, res) => {
@@ -24,8 +25,10 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.get('/signUp', async (req, res) => {
+router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
+
+    console.log('Recibí POST /signup con:', name, email); // LOG 1
 
     try {
         // Hashear y crear nuevo usuario
@@ -36,6 +39,7 @@ router.get('/signUp', async (req, res) => {
             'INSERT INTO "user" (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email, registered_at',
             [name, email, passwordHash]
         )
+        console.log('Usuario creado en DB'); // LOG 2
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error('Error creando usuario:', err);
