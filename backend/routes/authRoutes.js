@@ -4,18 +4,25 @@ const router = express.Router();
 const db = require('../dataBase'); // conexión correcta a PostgreSQL
 const bcrypt = require('bcrypt')
 
-// Ruta de login básica (POST /api/login)
+// Corregir el login para usar password_hash y bcrypt.compare
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const result = await db.query(
-            'SELECT * FROM user WHERE email = $1 AND password = $2',
-            [email, password]
+            'SELECT * FROM "user" WHERE email = $1',
+            [email]
         );
 
         if (result.rows.length > 0) {
-            res.json({ success: true, message: 'Login exitoso', user: result.rows[0] });
+            const user = result.rows[0];
+            const match = await bcrypt.compare(password, user.password_hash);
+
+            if (match) {
+                res.json({ success: true, message: 'Login exitoso', user: {...user, password_hash: undefined} });
+            } else {
+                res.status(401).json({ success: false, message: 'Credenciales inválidas' });
+            }
         } else {
             res.status(401).json({ success: false, message: 'Credenciales inválidas' });
         }
