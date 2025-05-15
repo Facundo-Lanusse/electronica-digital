@@ -2,14 +2,6 @@ import React, { useEffect, useState } from 'react';
 import '../css/Reservas.css';
 
 function Reservar() {
-    const defaultSeats = [
-        { id: 1, is_occupy: true },
-        { id: 2, is_occupy: true },
-        { id: 3, is_occupy: false },
-        { id: 4, is_occupy: false },
-        { id: 5, is_occupy: false },
-        { id: 6, is_occupy: false }
-    ];
 
     const [seats, setSeats] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,7 +10,7 @@ function Reservar() {
     useEffect(() => {
         const fetchSeats = async () => {
             try {
-                const res = await fetch(`BACKEND_URL/api/seats/${trainId}`);
+                const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/seats/${trainId}`);
                 const data = await res.json();
 
                 if (data.success && data.seats) {
