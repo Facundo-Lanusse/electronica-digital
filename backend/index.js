@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 const PORT = 3001;
 
-// ⚠️ Configurar CORS correctamente
+// Configurar CORS correctamente
 app.use(cors({
     origin: 'http://100.28.15.22:3001',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

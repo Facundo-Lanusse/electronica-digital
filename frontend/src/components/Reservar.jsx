@@ -11,16 +11,29 @@ function Reservar() {
         { id: 6, is_occupy: false }
     ];
 
-    const [seats, setSeats] = useState(defaultSeats);
+    const [seats, setSeats] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const trainId = 1; // Cambiar por el ID del tren correspondiente
 
     useEffect(() => {
         const fetchSeats = async () => {
             try {
-                const res = await fetch('https://BACKEND_URL/api/seats');
+                const res = await fetch(`BACKEND_URL/api/seats/${trainId}`);
                 const data = await res.json();
-                setSeats(data);
+
+                if (data.success && data.seats) {
+                    // Mapear la estructura correcta de datos
+                    setSeats(data.seats.map(seat => ({
+                        id: seat.seat_number,
+                        railcar: seat.railcar_number,
+                        is_occupy: seat.is_occupied,
+                        reserved_by: seat.reserved_by
+                    })));
+                }
+                setLoading(false);
             } catch (error) {
-                console.warn('Backend no disponible, usando datos por defecto');
+                console.warn('Error al cargar asientos:', error);
+                setLoading(false);
             }
         };
 
@@ -28,7 +41,7 @@ function Reservar() {
         const intervalId = setInterval(fetchSeats, 3000);
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [trainId]);
 
     return (
         <div className="reservar-container">
