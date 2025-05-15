@@ -1,0 +1,48 @@
+.reservar-container {
+    padding: 2rem;
+    text-align: center;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+.reservar-title {
+    font-size: 1.5rem;
+    background-color: #d3d3d3;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 2rem;
+}
+
+.seats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    justify-items: center;
+}
+
+.seat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.seat-label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.seat-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.seat-circle:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
