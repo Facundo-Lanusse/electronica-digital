@@ -36,23 +36,77 @@ function Reservar() {
         return () => clearInterval(intervalId);
     }, [trainId]);
 
+    const handleReservation = async (seat) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/seats/reserve`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    train_id: trainId,
+                    railcarNumber: seat.railcar,
+                    seatNumber: seat.id,
+                    userId
+                })
+            });
+
+            const data = await response.json();
+            if(data.success) {
+                // Actualizar el estado local
+                setSeats(seats.map(s =>
+                    s.id === seat.id && s.railcar === seat.railcar
+                        ? { ...s, reservedBy: userId }
+                        : s
+                ));
+            } else {
+                alert(data.error || 'No se puede reservar e asiento');
+            }
+        } catch (error) {
+            console.error('Error reservando asiento:', error);
+            alert('Error reservando asiento');
+        }
+    };
+
+    if (loading){
+        return <div className="loading">Cargando asientos...</div>;
+    }
+
     return (
         <div className="reservar-container">
             <h2 className="reservar-title">Pick your place</h2>
+            {seats.length === 0 ? (
+                <p>No hay asientos disponibles</p>
+            ) : (
             <div className="seats-grid">
                 {seats.map((seat) => (
-                    <div key={seat.id} className="seat-container">
+                    <div key={`${seat.railcar}-${seat.id}`} className="seat-container">
                         <span className="seat-label">Seat {seat.id}</span>
                         <div
                             className="seat-circle"
                             style={{
-                                backgroundColor: seat.is_occupy ? '#e74c3c' : '#4caf50'
+                                backgroundColor: seat.is_occupy
+                                    ? '#e74c3c' // rojo para ocupado
+                                    : seat.reservedBy
+                                        ? '#f39c12' // naranja para reservado, verde para libre
+                                        :'#4caf50',
+                                cursor: !seat.isOccupied && !seat.reservedBy ? 'pointer' : 'default'
                             }}
-                            title={seat.is_occupy ? 'Ocupado' : 'Libre'}
+                            title={seat.is_occupy
+                                ? 'Ocupado'
+                                : seat.reservedBy
+                                    ? seat.reservedBy === userId
+                                        ? 'Reservado por ti'
+                                        : 'Reservado por otro usuario'
+                                    : 'Libre'}
+                            onClick={() => {
+                                if (!seat.isOccupied && !seat.reservedBy) {
+                                    handleReservation(seat);
+                                }
+                            }}
                         />
                     </div>
                 ))}
             </div>
+            )}
         </div>
     );
 }
