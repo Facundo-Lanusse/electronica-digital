@@ -9,6 +9,7 @@ router.get('/seats/:trainId', async (req, res) => {
     const { trainId } = req.params;
 
     try {
+        // Hago la consulta en la base de datos para obtener tren por id
         const result = await db.query(
             'SELECT seat_number, railcar_number, is_occupied ' +
             'FROM seat ' +
