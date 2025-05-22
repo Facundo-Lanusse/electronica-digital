@@ -34,7 +34,7 @@ router.post('/seats/reserve', async (req, res) => {
         // Verificar si el asiento está ocupado o ya reservado
         const checkResult = await db.query(
             'SELECT is_occupied, reserved_by FROM seat WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
-            [trainId, railcarNumber, seatNumber]
+            [trainId, railcarNumber, seatNumber.toString()]
         );
 
         if (checkResult.rows.length === 0) {
@@ -53,7 +53,7 @@ router.post('/seats/reserve', async (req, res) => {
         // Reservar el asiento (reserved_by es ahora INTEGER)
         await db.query(
             'UPDATE seat SET reserved_by = $1 WHERE train_id = $2 AND railcar_number = $3 AND seat_number = $4',
-            [userId, trainId, railcarNumber, seatNumber]
+            [userId, trainId, railcarNumber, seatNumber.toString()]
         );
 
         // Publicar en MQTT para encender el LED
@@ -74,7 +74,7 @@ router.post('/seats/cancel', async (req, res) => {
         // Verificar si el asiento está reservado por el usuario
         const checkResult = await db.query(
             'SELECT reserved_by FROM seat WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
-            [trainId, railcarNumber, seatNumber]
+            [trainId, railcarNumber, seatNumber.toString()]
         );
 
         if (checkResult.rows.length === 0) {
@@ -88,7 +88,7 @@ router.post('/seats/cancel', async (req, res) => {
 
         await db.query(
             'UPDATE seat SET reserved_by = NULL WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
-            [trainId, railcarNumber, seatNumber]
+            [trainId, railcarNumber, seatNumber.toString()]
         );
 
         // Publicar en MQTT para apagar el LED
