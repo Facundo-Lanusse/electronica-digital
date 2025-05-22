@@ -89,7 +89,7 @@ function Reservar() {
                             style={{
                                 backgroundColor: seat.isOccupied
                                     ? '#e74c3c' // rojo para ocupado
-                                    : seat.reservedBy
+                                    : seat.reservedBy != null
                                         ? '#f39c12' // naranja para reservado
                                         : '#4caf50', // verde para libre
                                 cursor: !seat.isOccupied && !seat.reservedBy ? 'pointer' : 'default'
