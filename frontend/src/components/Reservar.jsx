@@ -50,6 +50,7 @@ function Reservar() {
             });
 
             const data = await response.json();
+            console.log('Respuesta del backend:', data);
             if(data.success) {
                 // Actualizar el estado local
                 setSeats(seats.map(s =>
@@ -83,7 +84,7 @@ function Reservar() {
                         <div
                             className="seat-circle"
                             style={{
-                                backgroundColor: seat.is_occupy
+                                backgroundColor: seat.is_occupied
                                     ? '#e74c3c' // rojo para ocupado
                                     : seat.reservedBy
                                         ? '#f39c12' // naranja para reservado, verde para libre
