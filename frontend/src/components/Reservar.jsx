@@ -38,6 +38,7 @@ function Reservar() {
 
     const handleReservation = async (seat) => {
         try {
+            console.log('Respuesta del .env:', process.env.REACT_APP_BACKEND_URL);
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/seats/reserve`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
