@@ -11,10 +11,10 @@ router.get('/seats/:trainId', async (req, res) => {
     try {
         // Hago la consulta en la base de datos para obtener tren por id
         const result = await db.query(
-            'SELECT seat_number, railcar_number, is_occupied ' +
+            'SELECT seat_number, railcar_number, is_occupied, reserved_by ' +
             'FROM seat ' +
-            'where train_id = $1 ' +
-            'order by railcar_number, seat_number',
+            'WHERE train_id = $1 ' +
+            'ORDER BY railcar_number, seat_number',
             [trainId]
         );
         res.json({
@@ -22,7 +22,7 @@ router.get('/seats/:trainId', async (req, res) => {
             seats: result.rows
         });
     } catch (err) {
-        console.error('Error al consultar asientos:',err);
+        console.error('Error al consultar asientos:', err);
         res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
 });
@@ -31,9 +31,9 @@ router.post('/seats/reserve', async (req, res) => {
     const { trainId, railcarNumber, seatNumber, userId } = req.body;
 
     try {
-        // Verificar si el asiento ya está reservado
+        // Verificar si el asiento está ocupado o ya reservado
         const checkResult = await db.query(
-            'SELECT is_reserved FROM seat WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
+            'SELECT is_occupied, reserved_by FROM seat WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
             [trainId, railcarNumber, seatNumber]
         );
 
@@ -42,14 +42,18 @@ router.post('/seats/reserve', async (req, res) => {
         }
 
         const seat = checkResult.rows[0];
-        if (seat.is_reserved) {
+        if (seat.is_occupied) {
+            return res.status(400).json({ success: false, message: 'El asiento está ocupado' });
+        }
+
+        if (seat.reserved_by !== null) {
             return res.status(400).json({ success: false, message: 'El asiento ya está reservado' });
         }
 
-        // Reservar el asiento
+        // Reservar el asiento (reserved_by es ahora INTEGER)
         await db.query(
-            'UPDATE seat SET is_reserved = true WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
-            [trainId, railcarNumber, seatNumber]
+            'UPDATE seat SET reserved_by = $1 WHERE train_id = $2 AND railcar_number = $3 AND seat_number = $4',
+            [userId, trainId, railcarNumber, seatNumber]
         );
 
         // Publicar en MQTT para encender el LED
@@ -67,9 +71,9 @@ router.post('/seats/cancel', async (req, res) => {
     const { trainId, railcarNumber, seatNumber, userId } = req.body;
 
     try {
-        // Verificar si el asiento está reservado
+        // Verificar si el asiento está reservado por el usuario
         const checkResult = await db.query(
-            'SELECT is_reserved FROM seat WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
+            'SELECT reserved_by FROM seat WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
             [trainId, railcarNumber, seatNumber]
         );
 
@@ -78,13 +82,12 @@ router.post('/seats/cancel', async (req, res) => {
         }
 
         const seat = checkResult.rows[0];
-        if (!seat.is_reserved) {
-            return res.status(400).json({ success: false, message: 'El asiento no está reservado' });
+        if (seat.reserved_by !== userId) {
+            return res.status(400).json({ success: false, message: 'El asiento no está reservado por este usuario' });
         }
 
-        // Cancelar la reserva del asiento
         await db.query(
-            'UPDATE seat SET is_reserved = false WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
+            'UPDATE seat SET reserved_by = NULL WHERE train_id = $1 AND railcar_number = $2 AND seat_number = $3',
             [trainId, railcarNumber, seatNumber]
         );
 

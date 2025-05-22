@@ -20,7 +20,7 @@ function Reservar() {
                         id: seat.seat_number,
                         railcar: seat.railcar_number,
                         isOccupied: seat.is_occupied,
-                        isReserved: seat.is_reserved
+                        reservedBy: seat.reserved_by // Ahora reserved_by es un INTEGER en la BD
                     })));
                 }
                 setLoading(false);
@@ -38,7 +38,9 @@ function Reservar() {
 
     const handleReservation = async (seat) => {
         try {
-            console.log('Respuesta del .env:', process.env.REACT_APP_BACKEND_URL);
+            // Asegurarse de que userId sea un número entero
+            const numericUserId = parseInt(userId, 10);
+
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/seats/reserve`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -46,17 +48,17 @@ function Reservar() {
                     trainId: trainId,
                     railcarNumber: seat.railcar,
                     seatNumber: seat.id,
-                    userId
+                    userId: numericUserId
                 })
             });
 
             const data = await response.json();
             console.log('Respuesta del backend:', data);
             if(data.success) {
-                // Actualizar el estado local
+                // Actualizar el estado local con el userId como número
                 setSeats(seats.map(s =>
                     s.id === seat.id && s.railcar === seat.railcar
-                        ? { ...s, isReserved: true }
+                        ? { ...s, reservedBy: numericUserId }
                         : s
                 ));
             } else {
@@ -87,18 +89,20 @@ function Reservar() {
                             style={{
                                 backgroundColor: seat.isOccupied
                                     ? '#e74c3c' // rojo para ocupado
-                                    : seat.isReserved
+                                    : seat.reservedBy
                                         ? '#f39c12' // naranja para reservado
                                         : '#4caf50', // verde para libre
-                                cursor: !seat.isOccupied && !seat.isReserved ? 'pointer' : 'default'
+                                cursor: !seat.isOccupied && !seat.reservedBy ? 'pointer' : 'default'
                             }}
                             title={seat.isOccupied
                                 ? 'Ocupado'
-                                : seat.isReserved
-                                    ? 'Reservado'
+                                : seat.reservedBy
+                                    ? seat.reservedBy === parseInt(userId, 10)
+                                        ? 'Reservado por ti'
+                                        : 'Reservado por otro usuario'
                                     : 'Libre'}
                             onClick={() => {
-                                if (!seat.isOccupied && !seat.isReserved) {
+                                if (!seat.isOccupied && !seat.reservedBy) {
                                     handleReservation(seat);
                                 }
                             }}
