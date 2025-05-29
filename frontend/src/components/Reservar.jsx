@@ -31,9 +31,6 @@ function Reservar() {
         };
 
         fetchSeats();
-        const intervalId = setInterval(fetchSeats, 3000);
-
-        return () => clearInterval(intervalId);
     }, [trainId]);
 
     const handleReservation = async (seat) => {
