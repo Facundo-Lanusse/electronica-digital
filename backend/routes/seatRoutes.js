@@ -28,7 +28,7 @@ router.get('/seats/:trainId', async (req, res) => {
 });
 
 router.post('/seats/reserve', async (req, res) => {
-    const { trainId, railcarNumber, seatNumber, userId } = req.body;
+    const { trainId, railcarNumber, seatNumber, id } = req.body;
     console.log(req.body);
 
     try {
@@ -54,7 +54,7 @@ router.post('/seats/reserve', async (req, res) => {
         // Reservar el asiento (reserved_by es ahora INTEGER)
         await db.query(
             'UPDATE seat SET reserved_by = $1 WHERE train_id = $2 AND railcar_number = $3 AND seat_number = $4',
-            [userId, trainId, railcarNumber, seatNumber.toString()]
+            [id, trainId, railcarNumber, seatNumber.toString()]
         );
 
         // Publicar en MQTT para encender el LED
