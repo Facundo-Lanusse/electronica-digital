@@ -7,6 +7,7 @@ function Reservar() {
     const [loading, setLoading] = useState(true);
     const trainId = 1; // Cambiar por el ID del tren correspondiente
     const userId = localStorage.getItem('userId');
+    console.log(userId);
 
     useEffect(() => {
         const fetchSeats = async () => {
