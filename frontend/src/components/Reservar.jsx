@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { authenticatedFetch, getUserId } from '../utils/authService';
 import '../css/Reservas.css';
 
 function Reservar() {
@@ -6,13 +7,13 @@ function Reservar() {
     const [seats, setSeats] = useState([]);
     const [loading, setLoading] = useState(true);
     const trainId = 1; // Cambiar por el ID del tren correspondiente
-    const userId = localStorage.getItem('userId');
-    console.log(userId);
+    const userId = getUserId(); // Obtener el ID de usuario del token JWT
+    console.log('ID de usuario actual:', userId);
 
     useEffect(() => {
         const fetchSeats = async () => {
             try {
-                const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/seats/${trainId}`);
+                const res = await authenticatedFetch(`/api/seats/${trainId}`);
                 const data = await res.json();
 
                 if (data.success && data.seats) {
@@ -39,9 +40,13 @@ function Reservar() {
             // Asegurarse de que userId sea un número entero
             const numericUserId = parseInt(userId, 10);
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/seats/reserve`, {
+            if (!numericUserId) {
+                alert('No se pudo identificar al usuario. Por favor, inicie sesión nuevamente.');
+                return;
+            }
+
+            const response = await authenticatedFetch(`/api/seats/reserve`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     trainId: trainId,
                     railcarNumber: seat.railcar,

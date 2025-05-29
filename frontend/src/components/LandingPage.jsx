@@ -75,13 +75,36 @@ const LandingPage = () => {
             const data = await response.json();
 
             if (response.ok) {
+                // Guardar el token JWT en localStorage
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+
+                    // Decodificar el token para obtener el ID de usuario (sin verificar firma)
+                    try {
+                        const base64Url = data.token.split('.')[1];
+                        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                        }).join(''));
+
+                        const payload = JSON.parse(jsonPayload);
+                        localStorage.setItem('userId', payload.userId);
+                    } catch (err) {
+                        console.error('Error decodificando token:', err);
+                        // Fallback: guardar el ID directamente si está disponible
+                        if (data.user && data.user.id) {
+                            localStorage.setItem('userId', data.user.id);
+                        }
+                    }
+                }
+
                 if (rememberMe) {
                     localStorage.setItem('rememberedEmail', email);
                 }
                 alert('Login exitoso');
                 navigate('/home');
             } else {
-                alert(data.error || 'Error al iniciar sesión');
+                alert(data.message || 'Error al iniciar sesión');
             }
         } catch (error) {
             console.error('Error en login:', error);
