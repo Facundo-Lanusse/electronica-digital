@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 // Secreto para JWT - idealmente esto debería estar en variables de entorno
-const JWT_SECRET = 'tu_secreto_super_seguro'; // En producción usar process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET; // En producción usar process.env.JWT_SECRET
 
 // Corregir el login para usar password_hash y bcrypt.compare
 router.post('/login', async (req, res) => {
