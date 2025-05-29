@@ -60,7 +60,7 @@ router.post('/seats/reserve', async (req, res) => {
         const topic = `train/${trainId}/seat/${railcarNumber}-${seatNumber}/reserve`;
         mqttClient.publish(topic, 'true');
 
-        res.json({ success: true, message: 'Asiento reservado correctamente' });
+        res.json({ success: true, message: `Asiento ${seatNumber} reservado correctamente por ${userId}` });
     } catch (err) {
         console.error('Error al reservar asiento:', err);
         res.status(500).json({ success: false, message: 'Error en el servidor' });
