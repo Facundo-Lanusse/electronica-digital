@@ -71,9 +71,9 @@ router.post('/seats/reserve', authMiddleware, async (req, res) => {
             return res.status(400).json({ success: false, message: 'El asiento ya está reservado' });
         }
 
-        // Crear la reserva
+        // Crear la reserva incluyendo reservation_date explícitamente
         await db.query(
-            'INSERT INTO reservation (user_id, seat_id, status) VALUES ($1, $2, $3)',
+            'INSERT INTO reservation (user_id, seat_id, status, reservation_date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)',
             [userId, seat.id, 'active']
         );
 
