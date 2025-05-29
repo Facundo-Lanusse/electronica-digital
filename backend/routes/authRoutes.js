@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
             const match = await bcrypt.compare(password, user.password_hash);
 
             if (match) {
-                res.json({ success: true, message: 'Login exitoso', user: {...user, password_hash: undefined} });
+                res.json({ success: true, message: 'Login exitoso', user: {user, password_hash: undefined} });
             } else {
                 res.status(401).json({ success: false, message: 'Credenciales inválidas' });
             }

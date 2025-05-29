@@ -29,6 +29,7 @@ router.get('/seats/:trainId', async (req, res) => {
 
 router.post('/seats/reserve', async (req, res) => {
     const { trainId, railcarNumber, seatNumber, userId } = req.body;
+    console.log(req.body);
 
     try {
         // Verificar si el asiento está ocupado o ya reservado
