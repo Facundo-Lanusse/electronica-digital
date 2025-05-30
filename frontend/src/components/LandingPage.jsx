@@ -78,6 +78,10 @@ const LandingPage = () => {
                 // Guardar el token JWT en localStorage
                 if (data.token) {
                     localStorage.setItem('token', data.token);
+                    if (data.user && data.user.name) {
+                        localStorage.setItem('name', data.user.name); //guarda nombre
+                    }
+
 
                     // Decodificar el token para obtener el ID de usuario (sin verificar firma)
                     try {

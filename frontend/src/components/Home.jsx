@@ -79,8 +79,13 @@ function Home() {
                     <motion.li variants={itemVariants} onClick={() => navigate('/reservar')}>
                         Reservar
                     </motion.li>
-                    <motion.li variants={itemVariants}>Mis Reservas</motion.li>
-                    <motion.li variants={itemVariants}>Perfil</motion.li>
+                    <motion.li variants={itemVariants} onClick={() => navigate('/misreservas')}>
+                        Mis Reservas
+                    </motion.li>
+                    <motion.li variants={itemVariants} onClick={() => navigate('/perfil')}>
+                        Perfil
+                    </motion.li>
+
                 </motion.ul>
             </motion.nav>
         </div>
