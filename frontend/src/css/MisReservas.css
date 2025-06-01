@@ -1,0 +1,160 @@
+.misreservas-container {
+    background: white;
+    border-radius: 28px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    max-width: 500px;
+    width: 100%;
+    margin: 30px auto;
+    padding: 30px;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.user-info h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+.header-icon {
+    font-size: 36px;
+    width: 60px;
+    height: 60px;
+    background: #f0f8ff;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a6cf7;
+}
+
+.misreservas-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    color: #1a1a1a;
+}
+
+.misreservas-subtitle {
+    font-size: 14px;
+    color: #7a7a7a;
+    margin: 5px 0 0 0;
+}
+
+/* Scrollable list container */
+.misreservas-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Scrollbar styling */
+.misreservas-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.misreservas-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Reservation card */
+.reservation-card {
+    background: #f9fbfe;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #edf2f7;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reservation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.reservation-icon {
+    font-size: 24px;
+    width: 50px;
+    height: 50px;
+    background: #e6f0ff;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    color: #4a6cf7;
+}
+
+.reservation-details {
+    flex: 1;
+}
+
+.reserva-text {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: #2d3748;
+}
+
+.reserva-date {
+    font-size: 14px;
+    color: #718096;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Cancel button */
+.cancelar-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #a0aec0;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.cancelar-btn:hover {
+    color: #e53e3e;
+    background: #fff5f5;
+    transform: scale(1.1);
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f9fbfe;
+    border-radius: 18px;
+    border: 1px dashed #e2e8f0;
+}
+
+.empty-state p {
+    font-size: 16px;
+    color: #718096;
+    margin-top: 15px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    color: #cbd5e0;
+    margin-bottom: 10px;
+}

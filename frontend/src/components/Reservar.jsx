@@ -1,32 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { authenticatedFetch, getUserId } from '../utils/authService';
+import { useNavigate } from 'react-router-dom';
+import NavigationMenu from './NavigationMenu';
 import '../css/Reservas.css';
 
 function Reservar() {
     const [seats, setSeats] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [myReservations, setMyReservations] = useState([]);
-    const trainId = 1; // Cambiar por el ID del tren correspondiente
-    const userId = getUserId(); // Obtener el ID de usuario del token JWT
+    const [pendingSeat, setPendingSeat] = useState(null);
+    const trainId = 1;
+    const userId = getUserId();
+    const navigate = useNavigate();
 
-    // Cargar asientos
     useEffect(() => {
         const fetchSeats = async () => {
             try {
                 const res = await authenticatedFetch(`/api/seats/${trainId}`);
-
-                if (!res) return; // Si no hay respuesta (posiblemente por redirección en authService)
-
+                if (!res) return;
                 const data = await res.json();
-
                 if (data.success && data.seats) {
-                    // Mapear la estructura correcta de datos
                     setSeats(data.seats.map(seat => ({
                         id: seat.id,
                         seatNumber: seat.seat_number,
                         railcar: seat.railcar_number,
                         isOccupied: seat.is_occupied,
-                        reservedBy: seat.reserved_by // ID del usuario que reservó
+                        reservedBy: seat.reserved_by
                     })));
                 }
                 setLoading(false);
@@ -35,26 +33,7 @@ function Reservar() {
                 setLoading(false);
             }
         };
-
-        // Cargar reservaciones del usuario actual
-        const fetchMyReservations = async () => {
-            try {
-                const res = await authenticatedFetch(`/api/reservations/my`);
-
-                if (!res) return;
-
-                const data = await res.json();
-
-                if (data.success && data.reservations) {
-                    setMyReservations(data.reservations);
-                }
-            } catch (error) {
-                console.warn('Error al cargar reservaciones:', error);
-            }
-        };
-
         fetchSeats();
-        fetchMyReservations();
     }, [trainId]);
 
     const handleReservation = async (seat) => {
@@ -78,22 +57,11 @@ function Reservar() {
             const data = await response.json();
 
             if (data.success) {
-                // Actualizar el estado local
                 setSeats(seats.map(s =>
                     s.id === seat.id
                         ? { ...s, reservedBy: parseInt(userId, 10) }
                         : s
                 ));
-
-                // Actualizar mis reservaciones
-                const updatedReservations = await authenticatedFetch(`/api/reservations/my`);
-                if (updatedReservations) {
-                    const reservationsData = await updatedReservations.json();
-                    if (reservationsData.success) {
-                        setMyReservations(reservationsData.reservations);
-                    }
-                }
-
                 alert('Asiento reservado exitosamente');
             } else {
                 alert(data.message || 'No se pudo reservar el asiento');
@@ -101,6 +69,8 @@ function Reservar() {
         } catch (error) {
             console.error('Error reservando asiento:', error);
             alert('Error al reservar el asiento');
+        } finally {
+            setPendingSeat(null);
         }
     };
 
@@ -125,22 +95,11 @@ function Reservar() {
             const data = await response.json();
 
             if (data.success) {
-                // Actualizar el estado local
                 setSeats(seats.map(s =>
                     s.id === seat.id
                         ? { ...s, reservedBy: null }
                         : s
                 ));
-
-                // Actualizar mis reservaciones
-                const updatedReservations = await authenticatedFetch(`/api/reservations/my`);
-                if (updatedReservations) {
-                    const reservationsData = await updatedReservations.json();
-                    if (reservationsData.success) {
-                        setMyReservations(reservationsData.reservations);
-                    }
-                }
-
                 alert('Reserva cancelada exitosamente');
             } else {
                 alert(data.message || 'No se pudo cancelar la reserva');
@@ -157,6 +116,9 @@ function Reservar() {
 
     return (
         <div className="reservar-container">
+            <div style={{ position: 'absolute', top: '1rem', left: '1rem' }}>
+                <NavigationMenu />
+            </div>
             <h2 className="reservar-title">Pick your place</h2>
             {seats.length === 0 ? (
                 <p>No hay asientos disponibles</p>
@@ -169,15 +131,15 @@ function Reservar() {
                                 className="seat-circle"
                                 style={{
                                     backgroundColor: seat.isOccupied
-                                        ? '#e74c3c' // rojo para ocupado
+                                        ? '#e74c3c'
                                         : seat.reservedBy !== null
                                             ? seat.reservedBy === parseInt(userId, 10)
-                                                ? '#3498db' // azul para reservado por el usuario actual
-                                                : '#f39c12' // naranja para reservado por otro
-                                            : '#4caf50', // verde para libre
+                                                ? '#3498db'
+                                                : '#f39c12'
+                                            : '#4caf50',
                                     cursor: !seat.isOccupied &&
-                                            (seat.reservedBy === null || seat.reservedBy === parseInt(userId, 10))
-                                            ? 'pointer' : 'default'
+                                    (seat.reservedBy === null || seat.reservedBy === parseInt(userId, 10))
+                                        ? 'pointer' : 'default'
                                 }}
                                 title={seat.isOccupied
                                     ? 'Ocupado'
@@ -187,12 +149,12 @@ function Reservar() {
                                             : 'Reservado por otro usuario'
                                         : 'Libre - Click para reservar'}
                                 onClick={() => {
-                                    if (seat.isOccupied) return; // No hacer nada si está ocupado
+                                    if (seat.isOccupied) return;
 
                                     if (seat.reservedBy === parseInt(userId, 10)) {
-                                        handleCancelReservation(seat); // Cancelar si es tuyo
+                                        handleCancelReservation(seat);
                                     } else if (seat.reservedBy === null) {
-                                        handleReservation(seat); // Reservar si está libre
+                                        setPendingSeat(seat);
                                     }
                                 }}
                             />
@@ -201,18 +163,15 @@ function Reservar() {
                 </div>
             )}
 
-            {myReservations.length > 0 && (
-                <div className="my-reservations">
-                    <h3>Mis Reservas</h3>
-                    <ul className="reservation-list">
-                        {myReservations.map(reservation => (
-                            <li key={reservation.id} className="reservation-item">
-                                <span>Asiento {reservation.seat_number}, Vagón {reservation.railcar_number}</span>
-                                <span className={`status ${reservation.status}`}>{reservation.status}</span>
-                                <span>{new Date(reservation.reservation_date).toLocaleString()}</span>
-                            </li>
-                        ))}
-                    </ul>
+            {pendingSeat && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <p className="modal-text">¿Estás seguro que querés reservar este asiento?</p>
+                        <div className="modal-buttons">
+                            <button className="modal-btn confirm" onClick={() => handleReservation(pendingSeat)}>Sí</button>
+                            <button className="modal-btn cancel" onClick={() => setPendingSeat(null)}>No</button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

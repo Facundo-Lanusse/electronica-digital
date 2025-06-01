@@ -4,6 +4,9 @@ import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import Reservar from './components/Reservar';
 import Perfil from './components/Perfil';
+import MisReservas from './components/MisReservas';
+
+
 
 
 function App() {
@@ -14,6 +17,7 @@ function App() {
           <Route path="/home" element={<Home />} />
             <Route path="/reservar" element={<Reservar />} />
             <Route path="/perfil" element={<Perfil />} />
+            <Route path="/misreservas" element={<MisReservas />} />
         </Routes>
       </Router>
   );
