@@ -10,7 +10,7 @@ async function publishOccupiedSeats() {
         console.log('Publicando estados de asientos reservados...');
         // Consulta para obtener todos los asientos ocupados
         const result = await db.query(
-            'SELECT train_id, railcar_number, seat_number FROM seat WHERE reserved_by != null'
+            'SELECT train_id, railcar_number, seat_number FROM seat WHERE reserved_by IS NOT NULL'
         );
 
         if (result.rows.length > 0) {
