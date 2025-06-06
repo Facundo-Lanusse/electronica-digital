@@ -16,7 +16,7 @@ async function publishOccupiedSeats() {
         if (result.rows.length > 0) {
             result.rows.forEach(seat => {
                 const topic = `train/${seat.train_id}/seat/${seat.railcar_number}-${seat.seat_number.toString()}/reserve`;
-                mqttClient.publish(topic, '1', { retain: true }, (err) => {
+                mqttClient.publish(topic, 'true', { retain: true }, (err) => {
                     if (err) {
                         console.error(`Error al publicar en ${topic}:`, err);
                     } else {

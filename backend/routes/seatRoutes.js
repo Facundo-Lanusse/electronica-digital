@@ -131,6 +131,12 @@ router.post('/seats/cancel', authMiddleware, async (req, res) => {
             ['cancelled', reservationResult.rows[0].id]
         );
 
+        // Actualizar la tabla seat para quitar la reserva (reserved_by = NULL)
+        await db.query(
+            'UPDATE seat SET reserved_by = NULL WHERE id = $1',
+            [seatId]
+        );
+
         // Confirmar la transacción
         await db.query('COMMIT');
 
