@@ -7,7 +7,7 @@ const mqttClient = mqtt.connect('mqtt://100.28.15.22:1883')
 // Función para publicar el estado de todos los asientos ocupados
 async function publishOccupiedSeats() {
     try {
-        console.log('Publicando estados de asientos ocupados...');
+        console.log('Publicando estados de asientos reservados...');
         // Consulta para obtener todos los asientos ocupados
         const result = await db.query(
             'SELECT train_id, railcar_number, seat_number FROM seat WHERE is_occupied = true'
@@ -20,16 +20,16 @@ async function publishOccupiedSeats() {
                     if (err) {
                         console.error(`Error al publicar en ${topic}:`, err);
                     } else {
-                        console.log(`Publicado: ${topic} → Ocupado`);
+                        console.log(`Publicado: ${topic} → Reservado`);
                     }
                 });
             });
-            console.log(`Se publicaron ${result.rows.length} asientos ocupados`);
+            console.log(`Se publicaron ${result.rows.length} asientos reservados.`);
         } else {
-            console.log('No hay asientos ocupados para publicar');
+            console.log('No hay asientos reservados para publicar');
         }
     } catch (err) {
-        console.error('Error al publicar los asientos ocupados:', err);
+        console.error('Error al publicar los asientos reservados:', err);
     }
 }
 
