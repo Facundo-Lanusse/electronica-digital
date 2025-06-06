@@ -10,12 +10,12 @@ router.get('/seats/:trainId', async (req, res) => {
     const { trainId } = req.params;
 
     try {
-        // Consulta que incluye información de reserva
+        // Consulta mejorada que obtiene correctamente las reservas activas
         const result = await db.query(
             `SELECT s.id, s.seat_number, s.railcar_number, s.is_occupied,
-                    r.user_id as reserved_by
+                    (SELECT r.user_id FROM reservation r 
+                     WHERE r.seat_id = s.id AND r.status = 'active' LIMIT 1) as reserved_by
              FROM seat s
-             LEFT JOIN reservation r ON s.id = r.seat_id AND r.status = 'active'
              WHERE s.train_id = $1
              ORDER BY s.railcar_number, s.seat_number`,
             [trainId]
