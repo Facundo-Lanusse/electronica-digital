@@ -4,9 +4,41 @@ const db = require('../dataBase')
 // conexión al broker mqtt con mi ip elastica publica
 const mqttClient = mqtt.connect('mqtt://100.28.15.22:1883')
 
+// Función para publicar el estado de todos los asientos ocupados
+async function publishOccupiedSeats() {
+    try {
+        console.log('Publicando estados de asientos reservados...');
+        // Consulta para obtener todos los asientos ocupados
+        const result = await db.query(
+            'SELECT train_id, railcar_number, seat_number FROM seat WHERE reserved_by IS NOT NULL'
+        );
+
+        if (result.rows.length > 0) {
+            result.rows.forEach(seat => {
+                const topic = `train/${seat.train_id}/seat/${seat.railcar_number}-${seat.seat_number.toString()}/reserve`;
+                mqttClient.publish(topic, 'true', { retain: true }, (err) => {
+                    if (err) {
+                        console.error(`Error al publicar en ${topic}:`, err);
+                    } else {
+                        console.log(`Publicado: ${topic} → Reservado`);
+                    }
+                });
+            });
+            console.log(`Se publicaron ${result.rows.length} asientos reservados.`);
+        } else {
+            console.log('No hay asientos reservados para publicar');
+        }
+    } catch (err) {
+        console.error('Error al publicar los asientos reservados:', err);
+    }
+}
+
 // Cuando se conecta al broker MQTT
 mqttClient.on('connect', () => {
     console.log('Conectado al broker MQTT');
+
+    // Publicar el estado de todos los asientos ocupados al iniciar
+    publishOccupiedSeats();
 
     // Escucha todos los cambios de asientos en todos los trenes
     const topic = 'train/+/seat/+/status';
