@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { authenticatedFetch } from '../utils/authService';
 import '../css/MisReservas.css';
+import NavigationMenu from "./NavigationMenu";
 
 function MisReservas() {
     const [myReservations, setMyReservations] = useState([]);
@@ -14,8 +15,7 @@ function MisReservas() {
 
                 const data = await res.json();
                 if (data.success && data.reservations) {
-                    const activas = data.reservations.filter(r => r.status !== 'Cancelled');
-                    setMyReservations(activas);
+                    setMyReservations(data.reservations); // no filtramos 'Cancelled'
                 }
             } catch (error) {
                 console.warn('Error al cargar reservaciones:', error);
@@ -39,10 +39,11 @@ function MisReservas() {
             if (!response) return;
 
             const data = await response.json();
-
             if (data.success) {
                 setMyReservations((prev) =>
-                    prev.filter(r => r.id !== reservation.id)
+                    prev.map(r =>
+                        r.id === reservation.id ? { ...r, status: 'Cancelled' } : r
+                    )
                 );
                 alert('Reserva cancelada exitosamente');
             } else {
@@ -56,6 +57,9 @@ function MisReservas() {
 
     return (
         <div className="misreservas-container">
+            <div style={{position: 'absolute', top: '1rem', left: '1rem'}}>
+                <NavigationMenu/>
+            </div>
             <div className="header-section">
                 <div className="user-info">
                     <h2>{name}</h2>
@@ -74,24 +78,30 @@ function MisReservas() {
             ) : (
                 <div className="misreservas-scroll">
                     {myReservations.map((r) => (
-                        <div className="reservation-card" key={r.id}>
+                        <div className={`reservation-card ${r.status === 'Cancelled' ? 'cancelled' : ''}`} key={r.id}>
                             <div className="reservation-icon">🚆</div>
                             <div className="reservation-details">
                                 <p className="reserva-text">Asiento {r.seat_number}, Vagón {r.railcar_number}</p>
-                                <p className="reserva-date">{new Date(r.reservation_date).toLocaleDateString('es-AR', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}</p>
+                                <p className="reserva-date">
+                                    {r.status === 'Cancelled'
+                                        ? 'Reserva cancelada'
+                                        : new Date(r.reservation_date).toLocaleDateString('es-AR', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                </p>
                             </div>
-                            <button
-                                className="cancelar-btn"
-                                onClick={() => handleCancelReservation(r)}
-                                title="Cancelar reserva"
-                            >
-                                ✖
-                            </button>
+                            {r.status !== 'Cancelled' && (
+                                <button
+                                    className="cancelar-btn"
+                                    onClick={() => handleCancelReservation(r)}
+                                    title="Cancelar reserva"
+                                >
+                                    ✖
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>

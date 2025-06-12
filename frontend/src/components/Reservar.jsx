@@ -74,42 +74,6 @@ function Reservar() {
         }
     };
 
-    const handleCancelReservation = async (seat) => {
-        if (!userId) {
-            alert('Necesitas iniciar sesión para cancelar una reserva');
-            return;
-        }
-
-        try {
-            const response = await authenticatedFetch(`/api/seats/cancel`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    trainId: trainId,
-                    railcarNumber: seat.railcar,
-                    seatNumber: seat.seatNumber
-                })
-            });
-
-            if (!response) return;
-
-            const data = await response.json();
-
-            if (data.success) {
-                setSeats(seats.map(s =>
-                    s.id === seat.id
-                        ? { ...s, reservedBy: null }
-                        : s
-                ));
-                alert('Reserva cancelada exitosamente');
-            } else {
-                alert(data.message || 'No se pudo cancelar la reserva');
-            }
-        } catch (error) {
-            console.error('Error cancelando reserva:', error);
-            alert('Error al cancelar la reserva');
-        }
-    };
-
     if (loading) {
         return <div className="loading">Cargando asientos...</div>;
     }
@@ -138,24 +102,19 @@ function Reservar() {
                                                 : '#f39c12'
                                             : '#4caf50',
                                     cursor: !seat.isOccupied &&
-                                    (seat.reservedBy === null || seat.reservedBy === parseInt(userId, 10))
+                                    seat.reservedBy === null
                                         ? 'pointer' : 'default'
                                 }}
-                                title={seat.isOccupied
-                                    ? 'Ocupado'
-                                    : seat.reservedBy
-                                        ? seat.reservedBy === parseInt(userId, 10)
-                                            ? 'Reservado por ti - Click para cancelar'
-                                            : 'Reservado por otro usuario'
-                                        : 'Libre - Click para reservar'}
+                                title={
+                                    seat.isOccupied
+                                        ? 'Ocupado'
+                                        : seat.reservedBy
+                                            ? 'Reservado'
+                                            : 'Libre - Click para reservar'
+                                }
                                 onClick={() => {
-                                    if (seat.isOccupied) return;
-
-                                    if (seat.reservedBy === parseInt(userId, 10)) {
-                                        handleCancelReservation(seat);
-                                    } else if (seat.reservedBy === null) {
-                                        setPendingSeat(seat);
-                                    }
+                                    if (seat.isOccupied || seat.reservedBy !== null) return;
+                                    setPendingSeat(seat);
                                 }}
                             />
                         </div>

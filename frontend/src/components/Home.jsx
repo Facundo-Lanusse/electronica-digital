@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import '../css/Home.css';
 import { useNavigate } from 'react-router-dom';
 
-
 const itemVariants = {
     open: {
         opacity: 1,
@@ -21,12 +20,9 @@ function Home() {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
 
-
     return (
-        <div style={{ padding: '2rem', position: 'relative', zIndex: 1 }}>
-
-            <h2 style={{color: 'white'}}>Home</h2>
-
+        <div className="home-container">
+            {/* MENÚ */}
             <motion.nav
                 initial={false}
                 animate={isOpen ? "open" : "closed"}
@@ -74,7 +70,7 @@ function Home() {
                             }
                         }
                     }}
-                    style={{pointerEvents: isOpen ? "auto" : "none"}}
+                    style={{ pointerEvents: isOpen ? "auto" : "none" }}
                 >
                     <motion.li variants={itemVariants} onClick={() => navigate('/reservar')}>
                         Reservar
@@ -85,11 +81,17 @@ function Home() {
                     <motion.li variants={itemVariants} onClick={() => navigate('/perfil')}>
                         Perfil
                     </motion.li>
-
                 </motion.ul>
             </motion.nav>
+
+            {/* TEXTO DEL CENTRO */}
+            <div className="welcome-text">
+                <p className="welcome-to">Welcome <span className="welcome-sub">to</span></p>
+                <h1 className="welcome-title">TrainManager</h1>
+            </div>
         </div>
     );
+
 }
 
 export default Home;
