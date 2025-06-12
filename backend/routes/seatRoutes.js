@@ -78,6 +78,12 @@ router.post('/seats/reserve', authMiddleware, async (req, res) => {
             [userId, seat.id, 'active']
         );
 
+        // Actualizar el estado del asiento a ocupado y guardar el usuario que reservó
+        await db.query(
+            'UPDATE seat SET reserved_by = $1 WHERE id = $2',
+            [userId, seat.id]
+        );
+
         // Confirmar la transacción
         await db.query('COMMIT');
 
@@ -206,3 +212,5 @@ router.get('/reservations/:userId', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+
+
