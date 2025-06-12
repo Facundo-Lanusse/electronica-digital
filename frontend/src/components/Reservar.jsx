@@ -37,8 +37,8 @@ function Reservar() {
         // Cargar asientos inicialmente
         fetchSeats();
 
-        // Configurar actualización periódica cada 30 segundos
-        const intervalId = setInterval(fetchSeats, 30000);
+        // Configurar actualización periódica cada 3 segundos
+        const intervalId = setInterval(fetchSeats, 3000);
 
         // Limpiar el intervalo cuando el componente se desmonte
         return () => clearInterval(intervalId);
