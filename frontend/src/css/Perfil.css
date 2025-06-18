@@ -1,8 +1,8 @@
 .perfil-container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 2rem;
+    align-items: start;
+    padding-top: 7rem;
     background-color: #f5f5f5;
     min-height: 100vh;
 }
@@ -11,54 +11,59 @@
     background: white;
     border-radius: 20px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
+    max-width: 700px;
+    height: 500px;
     width: 100%;
     text-align: center;
     overflow: hidden;
     position: relative;
+    margin-left: 100px;
+    margin-top: -3rem;
+
 }
 
 .perfil-header {
-    height: 100px;
+    height: 130px;
     background: linear-gradient(90deg, #ff9933, #ffcc66, #99ccff);
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
 }
 
 .perfil-avatar {
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 130px;
     background-color: #ccc;
     border-radius: 50%;
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 50%;
     transform: translateX(-50%);
     border: 4px solid white;
 }
 
 .perfil-name {
-    margin-top: 60px;
-    font-size: 24px;
+    margin-top: 80px; /* bajamos por el nuevo tamaño del avatar */
+    font-size: 28px;
     font-weight: bold;
 }
 
 .perfil-role {
     color: gray;
-    margin-bottom: 20px;
+    font-size: 16px;
+    margin-bottom: 30px;
 }
 
 .perfil-actions {
     display: flex;
     justify-content: space-around;
-    padding: 1rem 2rem 2rem;
-    gap: 1rem;
+    padding: 2rem;
+    gap: 2rem;
 }
 
 .perfil-button {
     background-color: #eef6fb;
-    padding: 1rem;
-    border-radius: 15px;
+    padding: 1.5rem;
+    border-radius: 18px;
     flex: 1;
     cursor: pointer;
     transition: 0.3s;
@@ -71,19 +76,48 @@
 
 .perfil-button-title {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .perfil-button-sub {
-    font-size: 12px;
+    font-size: 14px;
     color: #555;
     margin-top: 4px;
 }
 
 .arrow {
     position: absolute;
-    right: 15px;
-    bottom: 15px;
-    font-size: 18px;
+    font-size: 20px;
+    right: 20px;
+    bottom: 20px;
     color: #0056d2;
+}
+.menu-flotante {
+    position: fixed;
+    top: 20px;
+    left: 300px;
+
+    z-index: 1000;
+    padding: 10px;
+}
+
+.perfil-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid white;
+    box-shadow: 0 0 0 2px #000000;
+    background-color: #ccc;
+}
+
+.perfil-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }

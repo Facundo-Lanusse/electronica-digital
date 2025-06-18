@@ -2,7 +2,8 @@
     background: white;
     border-radius: 28px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    max-width: 500px;
+    max-width: 600px;
+    height: 500px;
     width: 100%;
     margin: 30px auto;
     padding: 30px;
@@ -161,4 +162,15 @@
 .reservation-card.cancelled {
     opacity: 0.6;
     background-color: #f8d7da;
+}
+.menu-wrapper {
+    margin-right: 20px;
+    margin-top: 30px;
+}
+
+.menu-flotante {
+    position: fixed; /* o 'absolute' si querés relativo al contenedor */
+    top: 0.2px;        /* cambiá estos valores según lo necesites */
+    left: 300px;
+    z-index: 1000;
 }

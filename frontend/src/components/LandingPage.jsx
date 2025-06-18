@@ -20,7 +20,7 @@ const LandingPage = () => {
     ];
 
     const handleClick = () => {
-        navigate('/home');
+        setActiveTab("tab2");
     };
 
     const handleToggle = () => {
@@ -120,7 +120,10 @@ const LandingPage = () => {
         <div className="landing-container">
             {activeTab === null && (
                 <div className="box-Welcome">
-                    <h1>Welcome</h1>
+                    <h1 className="hero-title">
+                        <span className="small">Welcome to</span>
+                        <span className="big">TrainManager</span>
+                    </h1>
                     <p>Reserva tu lugar</p>
                     <button onClick={handleClick}>Get Started</button>
                 </div>

@@ -15,8 +15,16 @@ function MisReservas() {
 
                 const data = await res.json();
                 if (data.success && data.reservations) {
-                    setMyReservations(data.reservations); // no filtramos 'Cancelled'
+                    const activas = data.reservations
+                        .filter(r => r.status === 'active')
+                        .sort((a, b) => new Date(b.reservation_date) - new Date(a.reservation_date));
+
+                    setMyReservations(activas);
                 }
+
+                /*if (data.success && data.reservations) {
+                    const activas = data.reservations.filter(r => r.status !== 'cancelled');
+                    setMyReservations(activas); }*/
             } catch (error) {
                 console.warn('Error al cargar reservaciones:', error);
             }
@@ -42,7 +50,7 @@ function MisReservas() {
             if (data.success) {
                 setMyReservations((prev) =>
                     prev.map(r =>
-                        r.id === reservation.id ? { ...r, status: 'Cancelled' } : r
+                        r.id === reservation.id ? { ...r, status: 'cancelled' } : r
                     )
                 );
                 alert('Reserva cancelada exitosamente');
@@ -56,56 +64,61 @@ function MisReservas() {
     };
 
     return (
-        <div className="misreservas-container">
-            <div style={{position: 'absolute', top: '1rem', left: '1rem'}}>
+
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-start'}}>
+            <div className="menu-flotante">
                 <NavigationMenu/>
             </div>
-            <div className="header-section">
-                <div className="user-info">
-                    <h2>{name}</h2>
-                    <p className="misreservas-subtitle">Mirá tu lista de reservas…</p>
-                </div>
-                <div className="header-icon">🚆</div>
-            </div>
 
-            <h1 className="misreservas-title">Mis Reservas</h1>
-
-            {myReservations.length === 0 ? (
-                <div className="empty-state">
-                    <div className="empty-icon">📋</div>
-                    <p>No tenés reservas activas</p>
+            <div className="misreservas-container">
+                <div className="header-section">
+                    <div className="user-info">
+                        <h2>{name}</h2>
+                        <p className="misreservas-subtitle">Mirá tu lista de reservas…</p>
+                    </div>
+                    <div className="header-icon">🚆</div>
                 </div>
-            ) : (
-                <div className="misreservas-scroll">
-                    {myReservations.map((r) => (
-                        <div className={`reservation-card ${r.status === 'Cancelled' ? 'cancelled' : ''}`} key={r.id}>
-                            <div className="reservation-icon">🚆</div>
-                            <div className="reservation-details">
-                                <p className="reserva-text">Asiento {r.seat_number}, Vagón {r.railcar_number}</p>
-                                <p className="reserva-date">
-                                    {r.status === 'Cancelled'
-                                        ? 'Reserva cancelada'
-                                        : new Date(r.reservation_date).toLocaleDateString('es-AR', {
-                                            day: 'numeric',
-                                            month: 'short',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                </p>
+
+                <h1 className="misreservas-title">Mis Reservas</h1>
+
+                {myReservations.length === 0 ? (
+                    <div className="empty-state">
+                        <div className="empty-icon">📋</div>
+                        <p>No tenés reservas activas</p>
+                    </div>
+                ) : (
+                    <div className="misreservas-scroll">
+                        {myReservations.map((r) => (
+                            <div className={`reservation-card ${r.status === 'cancelled' ? 'cancelled' : ''}`}
+                                 key={r.id}>
+                                <div className="reservation-icon">🚆</div>
+                                <div className="reservation-details">
+                                    <p className="reserva-text">Asiento {r.seat_number}, Vagón {r.railcar_number}</p>
+                                    <p className="reserva-date">
+                                        {r.status === 'cancelled'
+                                            ? 'Reserva cancelada'
+                                            : new Date(r.reservation_date).toLocaleDateString('es-AR', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                    </p>
+                                </div>
+                                {r.status !== 'cancelled' && (
+                                    <button
+                                        className="cancelar-btn"
+                                        onClick={() => handleCancelReservation(r)}
+                                        title="Cancelar reserva"
+                                    >
+                                        ✖
+                                    </button>
+                                )}
                             </div>
-                            {r.status !== 'Cancelled' && (
-                                <button
-                                    className="cancelar-btn"
-                                    onClick={() => handleCancelReservation(r)}
-                                    title="Cancelar reserva"
-                                >
-                                    ✖
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
