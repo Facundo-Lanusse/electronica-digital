@@ -38,7 +38,7 @@ function Reservar() {
         fetchSeats();
 
         // Configurar actualización periódica cada 3 segundos
-        const intervalId = setInterval(fetchSeats, 3000);
+        const intervalId = setInterval(fetchSeats, 500);
 
         // Limpiar el intervalo cuando el componente se desmonte
         return () => clearInterval(intervalId);
@@ -96,35 +96,39 @@ function Reservar() {
                 <p>No hay asientos disponibles</p>
             ) : (
                 <div className="seats-grid">
-                    {seats.map((seat) => (
-                        <div key={`${seat.railcar}-${seat.seatNumber}`} className="seat-container">
-                            <span className="seat-label">Seat {seat.seatNumber}</span>
-                            <div
-                                className="seat-circle"
-                                style={{
-                                    backgroundColor: seat.isOccupied
-                                        ? '#e74c3c'
-                                        : seat.reservedBy !== null
-                                            ? seat.reservedBy === parseInt(userId, 10)
-                                                ? '#3498db'
-                                                : '#f39c12'
-                                            : '#4caf50',
-                                    cursor: !seat.isOccupied &&
-                                    seat.reservedBy === null
-                                        ? 'pointer' : 'default'
-                                }}
-                                title={
-                                    seat.isOccupied
-                                        ? 'Ocupado'
-                                        : seat.reservedBy
-                                            ? 'Reservado'
-                                            : 'Libre - Click para reservar'
-                                }
-                                onClick={() => {
-                                    if (seat.isOccupied || seat.reservedBy !== null) return;
-                                    setPendingSeat(seat);
-                                }}
-                            />
+                    {[0, 2, 4].map((startIdx) => (
+                        <div className="seats-row" key={startIdx}>
+                            {seats.slice(startIdx, startIdx + 2).map((seat) => (
+                                <div key={`${seat.railcar}-${seat.seatNumber}`} className="seat-container">
+                                    <span className="seat-label">Seat {seat.seatNumber}</span>
+                                    <div
+                                        className="seat-circle"
+                                        style={{
+                                            backgroundColor: seat.isOccupied
+                                                ? '#e74c3c'
+                                                : seat.reservedBy !== null
+                                                    ? seat.reservedBy === parseInt(userId, 10)
+                                                        ? '#3498db'
+                                                        : '#f39c12'
+                                                    : '#4caf50',
+                                            cursor: !seat.isOccupied &&
+                                            seat.reservedBy === null
+                                                ? 'pointer' : 'default'
+                                        }}
+                                        title={
+                                            seat.isOccupied
+                                                ? 'Ocupado'
+                                                : seat.reservedBy
+                                                    ? 'Reservado'
+                                                    : 'Libre - Click para reservar'
+                                        }
+                                        onClick={() => {
+                                            if (seat.isOccupied || seat.reservedBy !== null) return;
+                                            setPendingSeat(seat);
+                                        }}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     ))}
                 </div>

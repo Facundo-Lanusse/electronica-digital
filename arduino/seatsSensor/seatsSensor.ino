@@ -17,8 +17,8 @@ const int railcarNumber = 1;
 const int numSeats = 6;
 
 // Pines de sensores y LEDs (ajustá a tu wiring real)
-const int irSensorPins[numSeats] = {4, 17, 18, 21, 22, 23};
-const int ledReservePins[numSeats] = {2, 15, 23, 25, 26, 27};
+const int irSensorPins[numSeats] = {13, 25, 33, 32, 34, 35};
+const int ledReservePins[numSeats] = { 21,16 ,17, 22, 27 , 26};
 
 // Topics MQTT
 char statusTopics[numSeats][50];
@@ -97,13 +97,14 @@ void loop() {
 
   // Publicar estado de cada sensor cada 5 segundos
   static unsigned long lastPublish = 0;
-  if (millis() - lastPublish > 5000) {
+  if (millis() - lastPublish > 1000) {
     for (int i = 0; i < numSeats; i++) {
       bool isOccupied = digitalRead(irSensorPins[i]) == LOW;
       const char* payload = isOccupied ? "1" : "0";
       client.publish(statusTopics[i], payload);
       Serial.printf("Seat %d → %s: %s\n", i + 1, statusTopics[i], payload);
     }
+    Serial.println("__________________________________");
     lastPublish = millis();
   }
 }
